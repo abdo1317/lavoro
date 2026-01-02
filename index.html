@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="it" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Calcolo Ore Lavoro</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Login Page -->
+        <div id="loginPage" class="login-page active">
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="login-header">
+                        <h1>Sistema Ore Lavoro</h1>
+                        <p>Calcola ore di lavoro e straordinari</p>
+                    </div>
+                    <form id="loginForm" class="login-form">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="username" placeholder="Nome utente" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="password" placeholder="Password" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="login-btn">
+                            <i class="fas fa-sign-in-alt"></i>
+                            Accedi
+                        </button>
+                    </form>
+                    <div class="login-footer">
+                        <p>Accesso di default: admin / 1234</p>
+                        <p>
+                            <a id="registerLink" href="register.html" style="text-decoration: none; font-weight: 600;">Registrati</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboardPage" class="dashboard-page">
+            <!-- Navigation -->
+            <nav class="navbar">
+                <div class="nav-brand">
+                    <i class="fas fa-clock"></i>
+                    <span>Sistema Ore Lavoro</span>
+                </div>
+                <div class="nav-menu">
+                    <button class="nav-btn active" data-page="calculator">
+                        <i class="fas fa-calculator"></i>
+                        <span>Calcolatrice</span>
+                    </button>
+                    <button class="nav-btn" data-page="records">
+                        <i class="fas fa-history"></i>
+                        <span>Registri</span>
+                    </button>
+                    <button class="nav-btn" data-page="settings">
+                        <i class="fas fa-cog"></i>
+                        <span>Impostazioni</span>
+                    </button>
+                    <button class="nav-btn theme-toggle-btn" type="button">
+                        <i class="fas fa-moon"></i>
+                        <span>Modalità Scura</span>  
+                    </button>
+                    <button class="nav-btn logout-btn">
+                        <i class="fas fa-sign-out-alt"></i>
+                        <span>Esci</span>
+                    </button>
+                </div>
+            </nav>
+
+            <main class="main-content">
+                <!-- Calculator Section -->
+                <section id="calculatorSection" class="content-section active">
+                    <div class="section-header">
+                        <h2>Calcolatore Ore Lavoro</h2>
+                        <p>Calcola ore di lavoro e straordinari per ogni giorno</p>
+                    </div>
+                    
+                    <div class="calculator-grid">
+                        <div class="calc-card">
+                            <h3>Informazioni Dipendente</h3>
+                            <div class="form-group">
+                                <label>Nome Dipendente</label>
+                                <input type="text" id="employeeName" placeholder="Nome Dipendente">
+                            </div>
+                            <div class="form-group">
+                                <label>Mese e Anno</label>
+                                <input type="month" id="monthYear" min="2000-01" max="2100-12">
+                            </div>
+                            <div class="form-group">
+                                <label>Ore di Lavoro Giornaliere</label>
+                                <input type="number" id="dailyHours" value="8" min="1" max="12">
+                            </div>
+                        </div>
+
+                        <div class="calc-card">
+                            <h3>Prezzi Finanziari</h3>
+                            <div class="form-group">
+                                <label>Tariffa Giornaliera</label>
+                                <input type="number" id="dailyRate" placeholder="Euro/giorno">
+                            </div>
+                            <div class="form-group">
+                                <label>Tariffa Straordinari</label>
+                                <input type="number" id="overtimeRate" placeholder="Euro/ora">
+                            </div>
+                        </div>
+
+                        <div class="calc-card">
+                            <h3>Festività Aggiuntive</h3>
+                            <div class="form-group">
+                                <label>Inserisci date festività</label>
+                                <textarea id="holidaysList" placeholder="Inserisci date festività (es., 2024-01-01, 2024-12-25)" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="calc-actions">
+                        <button id="generateDaysBtn" class="primary-btn">
+                            <i class="fas fa-calendar-alt"></i>
+                            Genera Giorni del Mese
+                        </button>
+                    </div>
+
+                    <div id="dailyEntriesSection" class="daily-entries-section hidden">
+                        <div class="daily-entries-header">
+                            <h3>Inserimento Ore Giornaliere</h3>
+                            <p>Conferma presenza e inserisci ore straordinari per ogni giorno</p>
+                        </div>
+                        
+                        <div class="daily-controls">
+                            <div class="quick-fill">
+                                <label>Riempi Ore Straordinari:</label>
+                                <input type="number" id="quickOvertime" min="0" max="12" step="0.5" placeholder="0">
+                                <button id="fillOvertimeBtn" class="warning-btn">
+                                    <i class="fas fa-fill"></i>
+                                    Riempi Tutto
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="daysGrid" class="days-grid">
+                            <!-- Days will be generated dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="calc-actions">
+                        <button id="calculateBtn" class="primary-btn">
+                            <i class="fas fa-calculator"></i>
+                            Calcola Ora
+                        </button>
+                        <button id="clearBtn" class="secondary-btn">
+                            <i class="fas fa-trash"></i>
+                            Cancella Dati
+                        </button>
+                    </div>
+
+                    <div id="resultsSection" class="results-section hidden">
+                        <div class="results-header">
+                            <h3>Risultati Calcolo</h3>
+                        </div>
+                        <div class="results-grid">
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-calendar"></i>
+                                </div>
+                                <div class="result-content">
+                                    <h4>Giorni Totali</h4>
+                                    <p id="totalDays">0 giorni</p>
+                                </div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-clock"></i>
+                                </div>
+                                <div class="result-content">
+                                    <h4>Ore Normali</h4>
+                                    <p id="regularHours">0 ore</p>
+                                </div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-business-time"></i>
+                                </div>
+                                <div class="result-content">
+                                    <h4>Ore Straordinari</h4>
+                                    <p id="overtimeHours">0 ore</p>
+                                </div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-money-bill-wave"></i>
+                                </div>
+                                <div class="result-content">
+                                    <h4>Stipendio Normale</h4>
+                                    <p id="regularSalary">0 Euro</p>
+                                </div>
+                            </div>
+                            <div class="result-card">
+                                <div class="result-icon">
+                                    <i class="fas fa-coins"></i>
+                                </div>
+                                <div class="result-content">
+                                    <h4>Bonus Straordinari</h4>
+                                    <p id="overtimePay">0 Euro</p>
+                                </div>
+                            </div>
+                            <div class="result-card total">
+                                <div class="result-icon">
+                                    <i class="fas fa-wallet"></i>
+                                </div>
+                                <div class="result-content">
+                                    <h4>Totale Dovuto</h4>
+                                    <p id="totalSalary">0 Euro</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="save-actions">
+                            <button id="saveRecordBtn" class="success-btn">
+                                <i class="fas fa-save"></i>
+                                Salva Registro
+                            </button>
+                            <button id="exportBtn" class="info-btn">
+                                <i class="fas fa-download"></i>
+                                Esporta Risultati
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Records Section -->
+                <section id="recordsSection" class="content-section">
+                    <div class="section-header">
+                        <h2>Registri Calcoli</h2>
+                        <p>Visualizza e gestisci i registri di calcolo precedenti</p>
+                    </div>
+                    <div class="records-controls">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchRecords" placeholder="Cerca nei registri...">
+                        </div>
+                        <div class="filter-buttons">
+                            <button class="filter-btn active" data-filter="all">Tutto</button>
+                            <button class="filter-btn" data-filter="month">Questo Mese</button>
+                            <button class="filter-btn" data-filter="year">Questo Anno</button>
+                        </div>
+                    </div>
+                    <div id="recordsList" class="records-list">
+                        <!-- Records will be dynamically added here -->
+                    </div>
+                </section>
+
+                <!-- Settings Section -->
+                <section id="settingsSection" class="content-section">
+                    <div class="section-header">
+                        <h2>Impostazioni</h2>
+                        <p>Personalizza impostazioni sistema</p>
+                    </div>
+                    <div class="settings-grid">
+                        <div class="settings-card">
+                            <h3 id="generalSettingsTitle">Impostazioni Generali</h3>
+                            <div class="form-group">
+                                <label>Nome Azienda</label>
+                                <input type="text" id="companyName" placeholder="Nome Azienda">
+                            </div>
+                            <div class="form-group">
+                                <label>Valuta Predefinita</label>
+                                <select id="currency">
+                                    <option value="ريال">Riyale Saudita</option>
+                                    <option value="درهم">Dirham UAE</option>
+                                    <option value="دينار">Dinaro Kuwaitiano</option>
+                                    <option value="جنيه">Sterlina Egiziana</option>
+                                    <option value="يورو">Euro</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Lingua</label>
+                                <select id="language">
+                                    <option value="ar">العربية</option>
+                                    <option value="en">English</option>
+                                    <option value="it">Italiano</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="settings-card">
+                            <h3 id="calculationSettingsTitle">Impostazioni Calcolo</h3>
+                            <div class="form-group">
+                                <label>Ore Lavoro Giornaliere Predefinite</label>
+                                <input type="number" id="defaultDailyHours" value="8" min="1" max="12">
+                            </div>
+                        </div>
+                        <div class="settings-card">
+                            <h3 id="dataSettingsTitle">Impostazioni Dati</h3>
+                            <div class="form-group">
+                                <label>Cambia Password</label>
+                                <input type="password" id="currentPassword" placeholder="Password Attuale">
+                                <input type="password" id="newPassword" placeholder="Nuova Password">
+                                <input type="password" id="confirmPassword" placeholder="Conferma Password">
+                            </div>
+                            <button id="updatePasswordBtn" class="primary-btn" type="button">Aggiorna Password</button>
+                            <div class="form-group" style="margin-top: 20px;">
+                                <label>Cambia Nome Utente</label>
+                                <input type="text" id="newUsername" placeholder="Nuovo Nome Utente">
+                            </div>
+                            <button id="updateUsernameBtn" class="primary-btn" type="button">Aggiorna Nome Utente</button>
+                        </div>
+                    </div>
+                    <div class="settings-actions">
+                        <button id="saveSettingsBtn" class="success-btn">
+                            <i class="fas fa-save"></i>
+                            Salva Impostazioni
+                        </button>
+                        <button id="resetSettingsBtn" class="danger-btn">
+                            <i class="fas fa-undo"></i>
+                            Ripristina Impostazioni Predefinite
+                        </button>
+                        <button id="exportDataBtn" class="info-btn">
+                            <i class="fas fa-download"></i>
+                            Esporta Dati
+                        </button>
+                        <button id="importDataBtn" class="info-btn">
+                            <i class="fas fa-upload"></i>
+                            Importa Dati
+                        </button>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast">
+        <div class="toast-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="toastMessage">Messaggio</span>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

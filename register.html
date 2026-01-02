@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="it" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrazione</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <div class="login-page active">
+            <div class="login-container">
+                <div class="login-card">
+                    <div class="login-header">
+                        <h1 id="registerTitle">Registrazione</h1>
+                        <p id="registerDesc">Crea un nuovo account</p>
+                    </div>
+
+                    <form id="registerForm" class="login-form">
+                        <div class="form-group">
+                            <div class="input-group">
+                                <i class="fas fa-user"></i>
+                                <input type="text" id="regUsername" placeholder="Nome utente" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="regPassword" placeholder="Password" required>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" id="regConfirmPassword" placeholder="Conferma Password" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="login-btn" id="registerBtn">
+                            <i class="fas fa-user-plus"></i>
+                            Registrati
+                        </button>
+                    </form>
+
+                    <div class="login-footer">
+                        <p id="registerMessage" style="min-height: 18px;"></p>
+                        <p>
+                            <a href="index.html" id="backToLoginLink" style="text-decoration: none; font-weight: 600;">Torna al login</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'workHoursAppData';
+        const THEME_STORAGE_KEY = 'workHoursTheme';
+
+        const registerI18n = {
+            ar: {
+                title: 'إنشاء حساب',
+                desc: 'قم بإنشاء حساب جديد',
+                username: 'اسم المستخدم',
+                password: 'كلمة المرور',
+                confirmPassword: 'تأكيد كلمة المرور',
+                register: 'تسجيل',
+                backToLogin: 'العودة لتسجيل الدخول',
+                mismatch: 'كلمة المرور وتأكيدها غير متطابقين',
+                usernameTaken: 'اسم المستخدم مستخدم بالفعل',
+                success: 'تم إنشاء الحساب بنجاح، سيتم تحويلك الآن...'
+            },
+            en: {
+                title: 'Create Account',
+                desc: 'Create a new account',
+                username: 'Username',
+                password: 'Password',
+                confirmPassword: 'Confirm Password',
+                register: 'Register',
+                backToLogin: 'Back to login',
+                mismatch: 'Password and confirmation do not match',
+                usernameTaken: 'Username is already taken',
+                success: 'Account created successfully. Redirecting...'
+            },
+            it: {
+                title: 'Registrazione',
+                desc: 'Crea un nuovo account',
+                username: 'Nome utente',
+                password: 'Password',
+                confirmPassword: 'Conferma Password',
+                register: 'Registrati',
+                backToLogin: 'Torna al login',
+                mismatch: 'Password e conferma non corrispondono',
+                usernameTaken: 'Nome utente già in uso',
+                success: 'Account creato con successo. Reindirizzamento...'
+            }
+        };
+
+        function safeGet(key) {
+            try { return localStorage.getItem(key); } catch (e) { return null; }
+        }
+
+        function safeSet(key, value) {
+            try { localStorage.setItem(key, value); return true; } catch (e) { return false; }
+        }
+
+        function loadAppData() {
+            const raw = safeGet(STORAGE_KEY);
+            if (!raw) return null;
+            try { return JSON.parse(raw); } catch (e) { return null; }
+        }
+
+        function ensureAppData() {
+            const data = loadAppData();
+            if (data && typeof data === 'object') return data;
+            return {
+                settings: {
+                    companyName: 'Sistema Ore Lavoro',
+                    currency: 'Euro',
+                    language: 'it',
+                    defaultDailyHours: 8,
+                    weekendDays: [6, 7]
+                },
+                records: [],
+                users: [
+                    { username: 'admin', password: '1234', role: 'admin' }
+                ]
+            };
+        }
+
+        function applyTheme() {
+            const theme = safeGet(THEME_STORAGE_KEY);
+            if (theme === 'dark' || theme === 'light') {
+                document.documentElement.dataset.theme = theme;
+            }
+        }
+
+        function applyLanguageUI(lang) {
+            const t = registerI18n[lang] || registerI18n.it;
+
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
+
+            const titleEl = document.getElementById('registerTitle');
+            if (titleEl) titleEl.textContent = t.title;
+
+            const descEl = document.getElementById('registerDesc');
+            if (descEl) descEl.textContent = t.desc;
+
+            const usernameEl = document.getElementById('regUsername');
+            if (usernameEl) usernameEl.placeholder = t.username;
+
+            const passwordEl = document.getElementById('regPassword');
+            if (passwordEl) passwordEl.placeholder = t.password;
+
+            const confirmEl = document.getElementById('regConfirmPassword');
+            if (confirmEl) confirmEl.placeholder = t.confirmPassword;
+
+            const btnEl = document.getElementById('registerBtn');
+            if (btnEl) btnEl.childNodes[btnEl.childNodes.length - 1].textContent = ' ' + t.register;
+
+            const backEl = document.getElementById('backToLoginLink');
+            if (backEl) backEl.textContent = t.backToLogin;
+        }
+
+        function setMessage(text, type) {
+            const el = document.getElementById('registerMessage');
+            if (!el) return;
+            el.textContent = text;
+            el.style.color = type === 'success' ? '#4caf50' : '#f44336';
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            applyTheme();
+
+            const data = ensureAppData();
+            const lang = (data.settings && data.settings.language) ? data.settings.language : 'it';
+            applyLanguageUI(lang);
+
+            const form = document.getElementById('registerForm');
+            if (!form) return;
+
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const t = registerI18n[lang] || registerI18n.it;
+
+                const username = (document.getElementById('regUsername')?.value || '').trim();
+                const password = document.getElementById('regPassword')?.value || '';
+                const confirm = document.getElementById('regConfirmPassword')?.value || '';
+
+                if (!username) return;
+
+                if (password !== confirm) {
+                    setMessage(t.mismatch, 'error');
+                    return;
+                }
+
+                const exists = Array.isArray(data.users) && data.users.some(u => u.username === username);
+                if (exists) {
+                    setMessage(t.usernameTaken, 'error');
+                    return;
+                }
+
+                if (!Array.isArray(data.users)) data.users = [];
+                const newUser = { username, password, role: 'user' };
+                data.users.push(newUser);
+
+                if (!safeSet(STORAGE_KEY, JSON.stringify(data))) return;
+                safeSet('currentUser', JSON.stringify(newUser));
+
+                setMessage(t.success, 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 600);
+            });
+        });
+    </script>
+</body>
+</html>
